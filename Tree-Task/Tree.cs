@@ -78,10 +78,11 @@ namespace Tree_Task
             if (p == null)
             {
                 p = new Node(data);
+                Head.FixBalance();
             }
             else
             {
-                Console.WriteLine("Node alreayd exists");
+                Console.WriteLine("Node already exists");
             }
         }
 
@@ -115,7 +116,11 @@ namespace Tree_Task
                         p.Right = null;
                         return temp;
                     case (true, true):
-                        break;
+                        temp = FindMin(p.Right);
+                        temp.Left = p.Left;
+                        temp.Right = p.Right;
+                        Remove(temp.Right, temp.Get());
+                        return temp;
                 }
             }
             else if (p.Get() < targetNode)
@@ -126,6 +131,7 @@ namespace Tree_Task
             {
                 p.Right = Remove(p.Right, targetNode);
             }
+            Head.FixBalance();
             return p;
         }
 
@@ -136,6 +142,65 @@ namespace Tree_Task
                 return FindMin(p.Left);
             }
             return p;
+        }
+
+        private void RemoveMin(Node p)
+        {
+            if (p.Left == null) { return; }
+            while (p.Left.Left != null)
+            {
+                p = p.Left;
+            }
+            p.Left = null;
+        }
+
+        public Node Balance(Node p)
+        {
+            switch (p.GetBalance())
+            {
+                case -2:
+                    if (p.Left.GetBalance() > 0)
+                    {
+                        p.Left = LeftRotation(p.Left);
+                    }
+                    p = RightRotation(p.Right);
+                    break;
+                case 2:
+                    if (p.Right.GetBalance() < 0)
+                    {
+                        p.Right = RightRotation(p.Right);
+                    }
+                    p = LeftRotation(p.Left);
+                    break;
+                default:
+                    break;
+            }
+            Head.FixBalance();
+            return p;
+        }
+
+        private Node RightRotation(Node p)
+        {
+            Node? L = p.Left;
+            p.Left = L.Right;
+            L.Right = p;
+            p.FixBalance();
+            return p;
+        }
+
+        private Node LeftRotation(Node p)
+        {
+            Node? R = p.Right;
+            p.Right = R.Left;
+            R.Left = p;
+            p.FixBalance();
+            return p;
+        }
+
+        public void Print()
+        {
+            string[] lines = new string[Head.GetHeight()];
+
         }
     }
 }

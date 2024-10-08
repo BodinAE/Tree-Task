@@ -40,20 +40,49 @@ namespace Tree_Task
         {
             return BalanceFactor;
         }
-        public void CheckBalance()
+        public void FixBalance()
         {
+            FixHeight();
             if (Left == null)
             {
-                BalanceFactor = 0 - Right.GetBalance();
+                BalanceFactor = 0 - Right.GetHeight();
             }
             else if (Right == null)
             {
-                BalanceFactor = Left.GetBalance();
+                BalanceFactor = Left.GetHeight();
             }
             else
             {
-                BalanceFactor = Left.GetBalance() - Right.GetBalance();
+                BalanceFactor = Left.GetHeight() - Right.GetHeight();
             }
+
+        }
+
+        public int FixHeight()
+        {
+            int rightheight = 0, leftheight = 0;
+            switch (Left == null, Right == null)
+            {
+                case (false, false):
+                    Height = 0; break;
+                case (false, true):
+                    rightheight = Right.FixHeight(); break;
+                case (true, false):
+                    leftheight = Left.FixHeight(); break;
+                case (true, true):
+                    rightheight = Right.FixHeight();
+                    leftheight = Left.FixHeight(); break;
+            }
+
+            if (rightheight > leftheight)
+            {
+                Height = rightheight + 1;
+            }
+            else
+            {
+                Height = leftheight + 1;
+            }
+            return Height;
         }
     }
 }
