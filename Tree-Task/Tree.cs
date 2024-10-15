@@ -50,40 +50,76 @@ namespace Tree_Task
         //        }
         //    }
         //}
-
-        public Node? Find(int data)                 //returns node with matching data,  or null node in apprpriate place if exact match not found
+        public Node? Find(int data)
         {
-            Node? currnode = this.Head;
+            Node? currnode = this.Head;                             //if tree is empty returns Head  
             while (currnode != null)
             {
-                if (currnode.Get() == data)
+                if (currnode.Get() == data)                        
                 {
-                    break;
-                }
-                else if (currnode.Get() >= data)
-                {
-                    currnode = currnode.Right;
+                    return currnode;                                //if matching node found, returns it
                 }
                 else
                 {
-                    currnode = currnode.Left;
+                    if (currnode.Get() < data)                     
+                    {
+                        currnode = currnode.Right;
+                    }
+                    else
+                    {
+                        currnode = currnode.Left;
+                    }
+                }
+            }
+            Console.WriteLine("Matching node not found");
+            return currnode;                                        //returns null if matching node not found
+        }
+
+        private Node? InsFind(int data)                             //Find method used only for Insert
+        {
+            Node? currnode = this.Head;                             //if tree is empty returns Head  
+            while (currnode != null)
+            {
+                if (currnode.Get() == data)                         //if matching node found, returns it
+                {
+                    break;
+                }                                                   
+                else if (currnode.Get() < data)                     //if matching node not found, returns node above the appropriate place to insert it
+                {
+                    if (currnode.Right == null) return currnode;
+                    else currnode = currnode.Right;
+                }
+                else
+                {   
+                    if (currnode.Left == null) return currnode;
+                    else currnode = currnode.Left;
                 }
             }
             return currnode;
         }
 
-        public void Insert(int data)
+        public void Insert(int data)                                //adds a node to the tree in the right place and fixes balance and height
         {
-            Node? p = Find(data);
+            Node? p = InsFind(data);
             if (p == null)
             {
-                p = new Node(data);
+                Head = new Node(data);
+            }
+            else if (p.Get() == data) 
+            {
+                Console.WriteLine($"Node {data} already exists");
+            }
+            else if (p.Get() >  data)
+            {
+                p.Left = new Node(data);
                 Head.FixBalance();
             }
-            else
-            {
-                Console.WriteLine("Node already exists");
+            else 
+            { 
+                p.Right = new Node(data);
+                Head.FixBalance();
             }
+            
         }
 
         //public void Remove(int data) 
@@ -98,41 +134,48 @@ namespace Tree_Task
 
         //    }
         //}
-        public Node Remove(Node? p, int targetNode)
+        public Node Remove(Node? parentnode, int targetNode)                 //Removes node in parentnode tree through recursion, should be called parentnode = Remove(parentnode, targetnode)
         {
-            if (p.Get() == targetNode)
+            if (parentnode.Get() == targetNode)
             {
                 Node temp;
-                switch ((p.Left == null, p.Right == null))
+                switch ((parentnode.Left != null, parentnode.Right != null))
                 {
                     case (false, false):
                         return null;
                     case (true, false):
-                        temp = p.Left;
-                        p.Left = null;
+                        temp = parentnode.Left;
+                        parentnode.Left = null;
+                        Head.FixBalance();
+                        Balance(parentnode);
                         return temp;
                     case (false, true):
-                        temp = p.Right;
-                        p.Right = null;
+                        temp = parentnode.Right;
+                        parentnode.Right = null;
+                        Head.FixBalance();
+                        Balance(parentnode);
                         return temp;
                     case (true, true):
-                        temp = FindMin(p.Right);
-                        temp.Left = p.Left;
-                        temp.Right = p.Right;
-                        Remove(temp.Right, temp.Get());
+                        temp = FindMin(parentnode.Right);
+                        RemoveMin(parentnode.Right);
+                        parentnode.Right = Remove(parentnode.Right, temp.Get());
+                        temp.Left = parentnode.Left;
+                        temp.Right = parentnode.Right;
+                        Head.FixBalance();
+                        Balance(parentnode);
                         return temp;
                 }
             }
-            else if (p.Get() < targetNode)
+            else if (parentnode.Get() < targetNode)
             {
-                p.Left = Remove(p.Left, targetNode);
+                parentnode.Left = Remove(parentnode.Left, targetNode);
             }
             else
             {
-                p.Right = Remove(p.Right, targetNode);
+                parentnode.Right = Remove(parentnode.Right, targetNode);
             }
-            Head.FixBalance();
-            return p;
+            
+            return parentnode;
         }
 
         public Node? FindMin(Node? p)       //Finds minimum node in tree with p node as root
@@ -144,9 +187,13 @@ namespace Tree_Task
             return p;
         }
 
-        private void RemoveMin(Node p)
+        private void RemoveMin(Node p)      //used for node removal
         {
-            if (p.Left == null) { return; }
+            if (p.Left == null) 
+            {
+                p.Left = null;
+                return; 
+            }
             while (p.Left.Left != null)
             {
                 p = p.Left;
@@ -173,7 +220,7 @@ namespace Tree_Task
                     p = LeftRotation(p.Left);
                     break;
                 default:
-                    break;
+                    return p;
             }
             Head.FixBalance();
             return p;
@@ -185,6 +232,7 @@ namespace Tree_Task
             p.Left = L.Right;
             L.Right = p;
             p.FixBalance();
+            Balance(p);
             return p;
         }
 
@@ -194,13 +242,25 @@ namespace Tree_Task
             p.Right = R.Left;
             R.Left = p;
             p.FixBalance();
+            Balance(p);
             return p;
         }
 
-        public void Print()
+        public static void Print(Node? p, int depth = 0)
         {
-            string[] lines = new string[Head.GetHeight()];
-
+            //string[] lines = new string[Head.GetHeight()];
+            if (p == null) return;
+            Console.WriteLine($"{new String('.', depth)} {p.Get()}");
+            if (p.Left != null)
+            {
+                Console.Write("Left");
+                Print(p.Left, depth + 1);
+            }
+            if (p.Right != null)
+            {
+                Console.Write("Rite");
+                Print(p.Right, depth + 1);
+            }
         }
     }
 }

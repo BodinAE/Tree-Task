@@ -58,10 +58,10 @@ namespace Tree_Task
 
         }
 
-        public int FixHeight()
+        public int FixHeight()                              //Broken
         {
             int rightheight = 0, leftheight = 0;
-            switch (Left == null, Right == null)
+            switch (Left != null, Right != null)
             {
                 case (false, false):
                     Height = 0; break;
@@ -83,6 +83,11 @@ namespace Tree_Task
                 Height = leftheight + 1;
             }
             return Height;
+        }
+
+        public override string ToString()
+        {
+            return Convert.ToString(this.Data);
         }
     }
 }
