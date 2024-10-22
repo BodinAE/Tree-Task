@@ -43,17 +43,20 @@ namespace Tree_Task
         public void FixBalance()
         {
             FixHeight();
-            if (Left == null)
+            switch ( Left != null, Right != null)
             {
-                BalanceFactor = 0 - Right.GetHeight();
-            }
-            else if (Right == null)
-            {
-                BalanceFactor = Left.GetHeight();
-            }
-            else
-            {
-                BalanceFactor = Left.GetHeight() - Right.GetHeight();
+                case (false, false) :
+                    BalanceFactor = 0;
+                    break;
+                case (false, true) :
+                    BalanceFactor = 0 - Right.GetHeight();
+                    break;
+                case (true, false) :
+                    BalanceFactor = Left.GetHeight();
+                    break;
+                case (true, true) :
+                    BalanceFactor = Left.GetHeight() - Right.GetHeight();
+                    break;
             }
 
         }

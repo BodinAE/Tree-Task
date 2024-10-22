@@ -99,6 +99,9 @@ namespace Tree_Task
         }
 
         public void Insert(int data)                                //adds a node to the tree in the right place and fixes balance and height
+            //!!!
+            //redo with recursion, add touched nodes to stack and then balance them
+            //!!!
         {
             Node? p = InsFind(data);
             if (p == null)
@@ -147,13 +150,13 @@ namespace Tree_Task
                         temp = parentnode.Left;
                         parentnode.Left = null;
                         Head.FixBalance();
-                        Balance(parentnode);
+                        //Balance(parentnode);
                         return temp;
                     case (false, true):
                         temp = parentnode.Right;
                         parentnode.Right = null;
                         Head.FixBalance();
-                        Balance(parentnode);
+                        //Balance(parentnode);
                         return temp;
                     case (true, true):
                         temp = FindMin(parentnode.Right);
@@ -162,11 +165,11 @@ namespace Tree_Task
                         temp.Left = parentnode.Left;
                         temp.Right = parentnode.Right;
                         Head.FixBalance();
-                        Balance(parentnode);
+                        //Balance(parentnode);
                         return temp;
                 }
             }
-            else if (parentnode.Get() < targetNode)
+            else if (parentnode.Get() > targetNode)
             {
                 parentnode.Left = Remove(parentnode.Left, targetNode);
             }
@@ -226,7 +229,7 @@ namespace Tree_Task
             return p;
         }
 
-        private Node RightRotation(Node p)
+        public Node RightRotation(Node p)
         {
             Node? L = p.Left;
             p.Left = L.Right;
@@ -236,7 +239,7 @@ namespace Tree_Task
             return p;
         }
 
-        private Node LeftRotation(Node p)
+        public Node LeftRotation(Node p)
         {
             Node? R = p.Right;
             p.Right = R.Left;

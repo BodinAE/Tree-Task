@@ -23,6 +23,15 @@
 
             test.Head = test.Remove(test.Head, 7);
             Tree.Print(test.Head);
+
+            test.Head = test.Remove(test.Head, 2);
+            Tree.Print(test.Head);
+
+            test.Head = test.Remove(test.Head, 13);
+            Tree.Print(test.Head);
+            //var n = test.Find(5);
+            //n = test.RightRotation(n);
+            //Tree.Print(test.Head);
         }
     }
 }
