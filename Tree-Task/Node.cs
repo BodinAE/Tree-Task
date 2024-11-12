@@ -8,11 +8,11 @@ namespace Tree_Task
 {
     internal class Node
     {
-        int Data { get; set; }
+        public int Data { get; set; }
         public Node? Left { get; set; }
         public Node? Right { get; set; }
-        int Height { get; set; }
-        int BalanceFactor { get; set; }
+        public int Height { get; set; }
+        public int BalanceFactor { get; set; }
 
         public Node(int data, int height)
         {
@@ -24,22 +24,7 @@ namespace Tree_Task
             this.Data = data;
             this.Height = 0;
         }
-        public int Get()
-        {
-            return Data;
-        }
-        public void SetHeight(int height)
-        {
-            this.Height = height;
-        }
-        public int GetHeight()
-        {
-            return Height;
-        }
-        public int GetBalance()
-        {
-            return BalanceFactor;
-        }
+
         public void FixBalance()
         {
             FixHeight();
@@ -49,13 +34,13 @@ namespace Tree_Task
                     BalanceFactor = 0;
                     break;
                 case (false, true) :
-                    BalanceFactor = 0 - Right.GetHeight();
+                    BalanceFactor = 0 - Right.Height;
                     break;
                 case (true, false) :
-                    BalanceFactor = Left.GetHeight();
+                    BalanceFactor = Left.Height;
                     break;
                 case (true, true) :
-                    BalanceFactor = Left.GetHeight() - Right.GetHeight();
+                    BalanceFactor = Left.Height - Right.Height;
                     break;
             }
 

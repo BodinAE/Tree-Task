@@ -10,9 +10,12 @@ namespace Tree_Task
     {
         public Node? Head { get; set; }
 
+        private Stack<Node> ChangedNodes { get; set; }
+
         public Tree(int data)
         {
             this.Head = new Node(data);
+            ChangedNodes = new Stack<Node>();
         }
 
         public Tree() { }
@@ -24,7 +27,7 @@ namespace Tree_Task
         //    Node currnode = Head;
         //    while (currnode != null)
         //    {
-        //        if (data > currnode.Get())
+        //        if (data > currnode.Data)
         //        {
         //            if (currnode.Right != null)
         //            {
@@ -55,13 +58,13 @@ namespace Tree_Task
             Node? currnode = this.Head;                             //if tree is empty returns Head  
             while (currnode != null)
             {
-                if (currnode.Get() == data)                        
+                if (currnode.Data == data)                        
                 {
                     return currnode;                                //if matching node found, returns it
                 }
                 else
                 {
-                    if (currnode.Get() < data)                     
+                    if (currnode.Data < data)                     
                     {
                         currnode = currnode.Right;
                     }
@@ -80,11 +83,11 @@ namespace Tree_Task
             Node? currnode = this.Head;                             //if tree is empty returns Head  
             while (currnode != null)
             {
-                if (currnode.Get() == data)                         //if matching node found, returns it
+                if (currnode.Data == data)                         //if matching node found, returns it
                 {
                     break;
                 }                                                   
-                else if (currnode.Get() < data)                     //if matching node not found, returns node above the appropriate place to insert it
+                else if (currnode.Data < data)                     //if matching node not found, returns node above the appropriate place to insert it
                 {
                     if (currnode.Right == null) return currnode;
                     else currnode = currnode.Right;
@@ -98,31 +101,49 @@ namespace Tree_Task
             return currnode;
         }
 
-        public void Insert(int data)                                //adds a node to the tree in the right place and fixes balance and height
+        public void Insert (int data)
+        {
+            if (Head == null)
+            {
+                Head = new Node(data);
+            }
+            else
+            {
+                InsertRec(data, Head);
+            }
+            ChangedNodes.Clear();
+        }
+        private void InsertRec(int data, Node? currnode)                                //adds a node to the tree in the right place and fixes balance and height
             //!!!
             //redo with recursion, add touched nodes to stack and then balance them
             //!!!
         {
-            Node? p = InsFind(data);
-            if (p == null)
+            if (currnode == null)
             {
-                Head = new Node(data);
+                currnode = new Node(data);
+                if (data < ChangedNodes.Peek().Data)
+                {
+                    ChangedNodes.Peek().Left = currnode;
+                }
+                else
+                {
+                    ChangedNodes.Peek().Right = currnode;
+                }
+                return;
             }
-            else if (p.Get() == data) 
+            if (currnode.Data == data)
             {
-                Console.WriteLine($"Node {data} already exists");
+                return;
             }
-            else if (p.Get() >  data)
+            if (data < currnode.Data)
             {
-                p.Left = new Node(data);
-                Head.FixBalance();
+                InsertRec(data, currnode.Left);
             }
-            else 
-            { 
-                p.Right = new Node(data);
-                Head.FixBalance();
+            else
+            {
+                InsertRec(data, currnode.Right);
             }
-            
+
         }
 
         //public void Remove(int data) 
@@ -139,7 +160,7 @@ namespace Tree_Task
         //}
         public Node Remove(Node? parentnode, int targetNode)                 //Removes node in parentnode tree through recursion, should be called parentnode = Remove(parentnode, targetnode)
         {
-            if (parentnode.Get() == targetNode)
+            if (parentnode.Data == targetNode)
             {
                 Node temp;
                 switch ((parentnode.Left != null, parentnode.Right != null))
@@ -161,7 +182,7 @@ namespace Tree_Task
                     case (true, true):
                         temp = FindMin(parentnode.Right);
                         RemoveMin(parentnode.Right);
-                        parentnode.Right = Remove(parentnode.Right, temp.Get());
+                        parentnode.Right = Remove(parentnode.Right, temp.Data);
                         temp.Left = parentnode.Left;
                         temp.Right = parentnode.Right;
                         Head.FixBalance();
@@ -169,7 +190,7 @@ namespace Tree_Task
                         return temp;
                 }
             }
-            else if (parentnode.Get() > targetNode)
+            else if (parentnode.Data > targetNode)
             {
                 parentnode.Left = Remove(parentnode.Left, targetNode);
             }
@@ -206,17 +227,17 @@ namespace Tree_Task
 
         public Node Balance(Node p)
         {
-            switch (p.GetBalance())
+            switch (p.BalanceFactor)
             {
                 case -2:
-                    if (p.Left.GetBalance() > 0)
+                    if (p.Left.BalanceFactor > 0)
                     {
                         p.Left = LeftRotation(p.Left);
                     }
                     p = RightRotation(p.Right);
                     break;
                 case 2:
-                    if (p.Right.GetBalance() < 0)
+                    if (p.Right.BalanceFactor < 0)
                     {
                         p.Right = RightRotation(p.Right);
                     }
@@ -251,9 +272,9 @@ namespace Tree_Task
 
         public static void Print(Node? p, int depth = 0)
         {
-            //string[] lines = new string[Head.GetHeight()];
+            //string[] lines = new string[Head.Height];
             if (p == null) return;
-            Console.WriteLine($"{new String('.', depth)} {p.Get()}");
+            Console.WriteLine($"{new String('.', depth)} {p.Data}");
             if (p.Left != null)
             {
                 Console.Write("Left");
