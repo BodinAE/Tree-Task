@@ -27,6 +27,7 @@ namespace Tree_Task
 
         public void CheckBalance()
         {
+            CheckHeight();
             switch ( Left != null, Right != null)
             {
                 case (false, false) :

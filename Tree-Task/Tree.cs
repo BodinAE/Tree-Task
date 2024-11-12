@@ -10,12 +10,12 @@ namespace Tree_Task
     {
         public Node? Head { get; set; }
 
-        private Stack<Node> ChangedNodes { get; set; }
+        private Stack<Node> TouchedNodes { get; set; }
 
         public Tree(int data)
         {
             this.Head = new Node(data);
-            ChangedNodes = new Stack<Node>();
+            TouchedNodes = new Stack<Node>();
         }
 
         public Tree() { }
@@ -111,44 +111,47 @@ namespace Tree_Task
             {
                 InsertRec(data, Head);
             }
-            ChangedNodes.Clear();
+            TouchedNodes.Clear();
         }
-        private void InsertRec(int data, Node? currnode)                                //adds a node to the tree in the right place and fixes balance and height
-            //!!!
-            //redo with recursion, add touched nodes to stack and then balance them
-            //!!!
+        private void InsertRec(int data, Node? currnode)                                //
         {
-            if (currnode == null)
+            if (currnode == null)                                                       //if node is null, assumes it's the correct placement and creates new node
             {
                 currnode = new Node(data);
-                if (data < ChangedNodes.Peek().Data)
-                    ChangedNodes.Peek().Left = currnode;
+                if (data < TouchedNodes.Peek().Data)                                    //connects the new node to it's parent
+                    TouchedNodes.Peek().Left = currnode;
                 else
-                    ChangedNodes.Peek().Right = currnode;
+                    TouchedNodes.Peek().Right = currnode;
                 return;
             }
-            if (currnode.Data == data)
+            if (currnode.Data == data)                                                  //does not add duplicates of nodes
+            {
+                Console.WriteLine("Node already exists");
                 return;
-            if (data < currnode.Data)
+            }
+            TouchedNodes.Push(currnode);                    
+            if (data < currnode.Data)                                                   
                 InsertRec(data, currnode.Left);
             else
                 InsertRec(data, currnode.Right);
+            currnode.CheckBalance();
+            //balance
 
         }
 
-        //public void Remove(int data) 
-        //{
-        //    Node? target = Find(data);
-        //    if (target == null)
-        //    {
-        //        Console.WriteLine($"{data} does not exist");
-        //    }
-        //    else
-        //    {
+        public void Remove(int data)
+        {
+            Node? target = Find(data);
+            if (target == null)
+            {
+                Console.WriteLine($"{data} does not exist");
+            }
+            else
+            {
 
-        //    }
-        //}
-        public Node Remove(Node? parentnode, int targetNode)                 //Removes node in parentnode tree through recursion, should be called parentnode = Remove(parentnode, targetnode)
+            }
+        }
+        public Node RemoveRec(Node? parentnode, int targetNode)                 //Removes node in parentnode tree through recursion, should be called parentnode = Remove(parentnode, targetnode)
         {
             if (parentnode.Data == targetNode)
             {
