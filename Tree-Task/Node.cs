@@ -25,22 +25,21 @@ namespace Tree_Task
             this.Height = 0;
         }
 
-        public void FixBalance()
+        public void CheckBalance()
         {
-            FixHeight();
             switch ( Left != null, Right != null)
             {
                 case (false, false) :
                     BalanceFactor = 0;
                     break;
                 case (false, true) :
-                    BalanceFactor = 0 - Right.Height;
+                    BalanceFactor = Right.Height;
                     break;
                 case (true, false) :
-                    BalanceFactor = Left.Height;
+                    BalanceFactor = -Left.Height;
                     break;
                 case (true, true) :
-                    BalanceFactor = Left.Height - Right.Height;
+                    BalanceFactor = Right.Height - Left.Height;
                     break;
             }
 
