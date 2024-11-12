@@ -14,11 +14,11 @@ namespace Tree_Task
         public int Height { get; set; }
         public int BalanceFactor { get; set; }
 
-        public Node(int data, int height)
-        {
-            this.Data = data;
-            this.Height = height;
-        }
+        //public Node(int data, int height)
+        //{
+        //    this.Data = data;
+        //    this.Height = height;
+        //}
         public Node(int data)
         {
             this.Data = data;
@@ -46,31 +46,30 @@ namespace Tree_Task
 
         }
 
-        public int FixHeight()                              //Broken
+        public void CheckHeight()                              
         {
-            int rightheight = 0, leftheight = 0;
             switch (Left != null, Right != null)
             {
                 case (false, false):
-                    Height = 0; break;
+                    Height = 0;
+                    break;
                 case (false, true):
-                    rightheight = Right.FixHeight(); break;
+                    Height = Right.Height + 1;
+                    break;
                 case (true, false):
-                    leftheight = Left.FixHeight(); break;
+                    Height = Left.Height + 1;
+                    break;
                 case (true, true):
-                    rightheight = Right.FixHeight();
-                    leftheight = Left.FixHeight(); break;
+                    if (Left.Height > Right.Height)
+                    {
+                        Height = Left.Height + 1;
+                    }
+                    else
+                    {
+                        Height = Right.Height + 1;
+                    }
+                    break;
             }
-
-            if (rightheight > leftheight)
-            {
-                Height = rightheight + 1;
-            }
-            else
-            {
-                Height = leftheight + 1;
-            }
-            return Height;
         }
 
         public override string ToString()
