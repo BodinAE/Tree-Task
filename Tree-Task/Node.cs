@@ -32,12 +32,15 @@ namespace Tree_Task
                 case (false, false) :
                     BalanceFactor = 0;
                     break;
+
                 case (false, true) :
                     BalanceFactor = Right.Height;
                     break;
+
                 case (true, false) :
                     BalanceFactor = -Left.Height;
                     break;
+
                 case (true, true) :
                     BalanceFactor = Right.Height - Left.Height;
                     break;
@@ -52,21 +55,21 @@ namespace Tree_Task
                 case (false, false):
                     Height = 0;
                     break;
+
                 case (false, true):
-                    Height = Right.Height + 1;
+                    Height =
+                        Right.Height + 1;
                     break;
+
                 case (true, false):
                     Height = Left.Height + 1;
                     break;
+
                 case (true, true):
                     if (Left.Height > Right.Height)
-                    {
                         Height = Left.Height + 1;
-                    }
                     else
-                    {
                         Height = Right.Height + 1;
-                    }
                     break;
             }
         }

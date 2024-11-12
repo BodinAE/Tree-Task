@@ -122,27 +122,17 @@ namespace Tree_Task
             {
                 currnode = new Node(data);
                 if (data < ChangedNodes.Peek().Data)
-                {
                     ChangedNodes.Peek().Left = currnode;
-                }
                 else
-                {
                     ChangedNodes.Peek().Right = currnode;
-                }
                 return;
             }
             if (currnode.Data == data)
-            {
                 return;
-            }
             if (data < currnode.Data)
-            {
                 InsertRec(data, currnode.Left);
-            }
             else
-            {
                 InsertRec(data, currnode.Right);
-            }
 
         }
 
