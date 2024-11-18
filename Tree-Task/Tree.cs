@@ -78,28 +78,28 @@ namespace Tree_Task
             return currnode;                                        //returns null if matching node not found
         }
 
-        private Node? InsFind(int data)                             //Find method used only for Insert
-        {
-            Node? currnode = this.Head;                             //if tree is empty returns Head  
-            while (currnode != null)
-            {
-                if (currnode.Data == data)                         //if matching node found, returns it
-                {
-                    break;
-                }                                                   
-                else if (currnode.Data < data)                     //if matching node not found, returns node above the appropriate place to insert it
-                {
-                    if (currnode.Right == null) return currnode;
-                    else currnode = currnode.Right;
-                }
-                else
-                {   
-                    if (currnode.Left == null) return currnode;
-                    else currnode = currnode.Left;
-                }
-            }
-            return currnode;
-        }
+        //private Node? InsFind(int data)                             //Find method used only for Insert
+        //{
+        //    Node? currnode = this.Head;                             //if tree is empty returns Head  
+        //    while (currnode != null)
+        //    {
+        //        if (currnode.Data == data)                         //if matching node found, returns it
+        //        {
+        //            break;
+        //        }                                                   
+        //        else if (currnode.Data < data)                     //if matching node not found, returns node above the appropriate place to insert it
+        //        {
+        //            if (currnode.Right == null) return currnode;
+        //            else currnode = currnode.Right;
+        //        }
+        //        else
+        //        {   
+        //            if (currnode.Left == null) return currnode;
+        //            else currnode = currnode.Left;
+        //        }
+        //    }
+        //    return currnode;
+        //}
 
         public void Insert (int data)
         {
@@ -139,60 +139,23 @@ namespace Tree_Task
 
         }
 
-        public void Remove(int data)
+        public void Remove(int target)
         {
-            Node? target = Find(data);
-            if (target == null)
+            if (Head == null)
             {
-                Console.WriteLine($"{data} does not exist");
+                Console.WriteLine("Head empty");
             }
             else
             {
-
+                RemoveRec(target, Head);
             }
+            TouchedNodes.Clear();
         }
-        public Node RemoveRec(Node? parentnode, int targetNode)                 //Removes node in parentnode tree through recursion, should be called parentnode = Remove(parentnode, targetnode)
+        public Node RemoveRec(int targetNode, Node? currnode)                 //Removes node in parentnode tree through recursion, should be called parentnode = Remove(parentnode, targetnode)
         {
-            if (parentnode.Data == targetNode)
-            {
-                Node temp;
-                switch ((parentnode.Left != null, parentnode.Right != null))
-                {
-                    case (false, false):
-                        return null;
-                    case (true, false):
-                        temp = parentnode.Left;
-                        parentnode.Left = null;
-                        Head.FixBalance();
-                        //Balance(parentnode);
-                        return temp;
-                    case (false, true):
-                        temp = parentnode.Right;
-                        parentnode.Right = null;
-                        Head.FixBalance();
-                        //Balance(parentnode);
-                        return temp;
-                    case (true, true):
-                        temp = FindMin(parentnode.Right);
-                        RemoveMin(parentnode.Right);
-                        parentnode.Right = Remove(parentnode.Right, temp.Data);
-                        temp.Left = parentnode.Left;
-                        temp.Right = parentnode.Right;
-                        Head.FixBalance();
-                        //Balance(parentnode);
-                        return temp;
-                }
-            }
-            else if (parentnode.Data > targetNode)
-            {
-                parentnode.Left = Remove(parentnode.Left, targetNode);
-            }
-            else
-            {
-                parentnode.Right = Remove(parentnode.Right, targetNode);
-            }
-            
-            return parentnode;
+           //if only one connection, replace node with it
+           //if two, replace node with min from right
+           //if none, remove node
         }
 
         public Node? FindMin(Node? p)       //Finds minimum node in tree with p node as root
