@@ -15,44 +15,10 @@ namespace Tree_Task
         public Tree(int data)
         {
             this.Head = new Node(data);
-            TouchedNodes = new Stack<Node>();
         }
 
         public Tree() { }
 
-        //public void Insert(int data)
-        //{
-        //    Node a = new Node(data);
-        //    int a_height = 0;
-        //    Node currnode = Head;
-        //    while (currnode != null)
-        //    {
-        //        if (data > currnode.Data)
-        //        {
-        //            if (currnode.Right != null)
-        //            {
-        //                currnode = currnode.Right;
-        //            }
-        //            else
-        //            {
-        //                currnode.Right = a;
-        //                currnode = null;
-        //            }
-        //        }
-        //        else
-        //        {
-        //            if (currnode.Left != null)
-        //            {
-        //                currnode = currnode.Left;
-        //            }
-        //            else
-        //            {
-        //                currnode.Left = a;
-        //                currnode = null;
-        //            }
-        //        }
-        //    }
-        //}
         public Node? Find(int data)
         {
             Node? currnode = this.Head;                             //if tree is empty returns Head  
@@ -78,31 +44,10 @@ namespace Tree_Task
             return currnode;                                        //returns null if matching node not found
         }
 
-        //private Node? InsFind(int data)                             //Find method used only for Insert
-        //{
-        //    Node? currnode = this.Head;                             //if tree is empty returns Head  
-        //    while (currnode != null)
-        //    {
-        //        if (currnode.Data == data)                         //if matching node found, returns it
-        //        {
-        //            break;
-        //        }                                                   
-        //        else if (currnode.Data < data)                     //if matching node not found, returns node above the appropriate place to insert it
-        //        {
-        //            if (currnode.Right == null) return currnode;
-        //            else currnode = currnode.Right;
-        //        }
-        //        else
-        //        {   
-        //            if (currnode.Left == null) return currnode;
-        //            else currnode = currnode.Left;
-        //        }
-        //    }
-        //    return currnode;
-        //}
 
         public void Insert (int data)
         {
+            TouchedNodes = new Stack<Node>();
             if (Head == null)
             {
                 Head = new Node(data);
@@ -122,6 +67,7 @@ namespace Tree_Task
                     TouchedNodes.Peek().Left = currnode;
                 else
                     TouchedNodes.Peek().Right = currnode;
+                Balance(currnode);
                 return;
             }
             if (currnode.Data == data)                                                  //does not add duplicates of nodes
@@ -140,6 +86,7 @@ namespace Tree_Task
 
         public void Remove(int target)
         {
+            TouchedNodes = new Stack<Node>();
             if (Head == null)
             {
                 Console.WriteLine("Head empty");
@@ -157,37 +104,83 @@ namespace Tree_Task
            //if none, remove node
             if (currnode.Data == targetNode)
             {
-                switch(currnode.Left, currnode.Right)
-                {
-                    case (false, false):
-                        if (targetNode < TouchedNodes.Peek().Data)                                    //connects the new node to it's parent
-                            TouchedNodes.Peek().Left = null;
-                        else
-                            TouchedNodes.Peek().Right = null;
-                        break;
-                    case (true, false):
-                        TouchedNodes.Peek() = currnode.Left;
-                        break;
-                    case (false, true):
-                        TouchedNodes.Peek() = currnode.Right;
-                        break;
-                    case (true, true):
-                        TouchedNodes.Peek() = FindMin(currnode.Right);
-                        break;
+                if (currnode != Head)
+                { 
+                    Node parentnode = TouchedNodes.Peek();
+                    switch (currnode.Left != null, currnode.Right != null)
+                    {
+                        case (false, false):
+                            if (targetNode < parentnode.Data)                                    //connects the new node to it's parent
+                                parentnode.Left = null;
+                            else
+                                parentnode.Right = null;
+                            break;
+
+                        case (true, false):
+                            if (targetNode < parentnode.Data)                                    //connects the new node to it's parent
+                                parentnode.Left = currnode.Left;
+                            else
+                                parentnode.Right = currnode.Left; 
+                            break;
+
+                        case (false, true):
+                            if (targetNode < parentnode.Data)                                    //connects the new node to it's parent
+                                parentnode.Left = currnode.Right;
+                            else
+                                parentnode.Right = currnode.Right;
+                            break;
+
+                        case (true, true):
+                            Node min = FindMin(currnode.Right);
+                            RemoveMin(currnode.Right);
+                            min.Left = currnode.Left;
+                            min.Right = currnode.Right;
+                            if (targetNode < parentnode.Data)                                    //connects the new node to it's parent
+                                parentnode.Left = min;
+                            else
+                                parentnode.Right = min;
+                            break;
+                    }
                 }
+                else
+                {
+                    switch (currnode.Left != null, currnode.Right != null)
+                    {
+                        case (false, false):
+                            Head = null;
+                            break;
+                        case (true, false):
+                            Head = currnode.Left;
+                            break;
+                        case (false, true):
+                            Head = currnode.Right;
+                            break;
+                        case (true, true):
+                            Node min = FindMin(currnode.Right);
+                            RemoveMin(currnode.Right);
+                            min.Left = currnode.Left;
+                            min.Right = currnode.Right;
+                            Head = min;
+                            
+                            break;
+                    }
+                }
+                currnode.Left = null;
+                currnode.Right = null;
+                return;
             }
             else if (currnode == null)
             {
-                Console.WriteLine("no node")
+                Console.WriteLine("no node");
             }
             TouchedNodes.Push(currnode);
             if (targetNode < currnode.Data)
             {
-                RemoveRec(targetNode, currnode.Left)
+                RemoveRec(targetNode, currnode.Left);
             }
-            else if (targetNode > currnode.Right) 
-            { 
-                RemoveRec(targetNode, currnode.Right)
+            else if (targetNode > currnode.Data) 
+            {
+                RemoveRec(targetNode, currnode.Right);
             }
             Balance(currnode);
             return;
@@ -204,26 +197,41 @@ namespace Tree_Task
 
         private void RemoveMin(Node p)      //used for node removal
         {
-            if (p.Left == null) 
-            {
-                p.Left = null;
-                return; 
-            }
+            //if (p.Left == null) 
+            //{
+            //    p.Left = null;
+            //    return; 
+            //}
+            Stack<Node> RMnodes = new Stack<Node>();
             while (p.Left.Left != null)
             {
+                RMnodes.Push(p);
                 p = p.Left;
             }
+            RMnodes.Push(p);
             p.Left = null;
+            while (RMnodes.Count > 0)
+            {
+                Node q = RMnodes.Pop();
+                q = q.BalanceNode();
+            }
         }
 
         private void Balance(Node p)
         {
-            Node parentnode = TouchedNodes.Pop();
-            if (p.Data < parentnode.Data)
-                parentnode.Left = parentnode.Left.BalanceNode();
+            if (p == Head)
+            {
+                Head = Head.BalanceNode();
+            }
             else
-                parentnode.Right = parentnode.Right.BalanceNode();
-            return;
+            {
+                Node parentnode = TouchedNodes.Pop();
+                if ((p.Data < parentnode.Data) && (parentnode.Left != null))
+                    parentnode.Left = parentnode.Left.BalanceNode();
+                else if (parentnode.Right != null)
+                    parentnode.Right = parentnode.Right.BalanceNode();
+                return;
+            }
         }
 
         public Node RightRotation(Node p)
@@ -231,7 +239,7 @@ namespace Tree_Task
             Node? L = p.Left;
             p.Left = L.Right;
             L.Right = p;
-            p.FixBalance();
+            p.CheckBalance();
             Balance(p);
             return p;
         }
@@ -241,7 +249,7 @@ namespace Tree_Task
             Node? R = p.Right;
             p.Right = R.Left;
             R.Left = p;
-            p.FixBalance();
+            p.CheckBalance();
             Balance(p);
             return p;
         }

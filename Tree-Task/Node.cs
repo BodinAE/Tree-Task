@@ -104,15 +104,15 @@ namespace Tree_Task
                 {
                     this.Right = this.Right.RotateRight();
                 }
-                return this.RotateLeft()
+                return this.RotateLeft();
             }
             if (this.BalanceFactor == -2)
             {
                 if (this.Left.BalanceFactor > 0)
                 {
-                    this.Left = this.Left.RotateLeft()
+                    this.Left = this.Left.RotateLeft();
                 }
-                return this.RotateRight()
+                return this.RotateRight();
             }
             return this;
         }

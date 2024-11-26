@@ -18,17 +18,19 @@
             test.Insert(13);
             test.Insert(1);
             test.Insert(2);
+           // test.Insert(14);
             Tree.Print(test.Head);
             Console.WriteLine(test.Find(10));
 
-            test.Head = test.Remove(test.Head, 7);
-            Tree.Print(test.Head);
 
-            test.Head = test.Remove(test.Head, 2);
-            Tree.Print(test.Head);
+            //test.Remove(7);
+            //Tree.Print(test.Head);
 
-            test.Head = test.Remove(test.Head, 13);
-            Tree.Print(test.Head);
+            //test.Remove(2);
+            //Tree.Print(test.Head);
+
+            //test.Remove(13);
+            //Tree.Print(test.Head);
             //var n = test.Find(5);
             //n = test.RightRotation(n);
             //Tree.Print(test.Head);
