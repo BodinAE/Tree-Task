@@ -132,11 +132,10 @@ namespace Tree_Task
             TouchedNodes.Push(currnode);                    
             if (data < currnode.Data)                                                   
                 InsertRec(data, currnode.Left);
-            else
+            else if (data > currnode.Data)
                 InsertRec(data, currnode.Right);
-            currnode.CheckBalance();
-            //balance
-
+            Balance(currnode);
+            return;
         }
 
         public void Remove(int target)
@@ -151,11 +150,47 @@ namespace Tree_Task
             }
             TouchedNodes.Clear();
         }
-        public Node RemoveRec(int targetNode, Node? currnode)                 //Removes node in parentnode tree through recursion, should be called parentnode = Remove(parentnode, targetnode)
+        public void RemoveRec(int targetNode, Node? currnode)                 //Removes node in parentnode tree through recursion, should be called parentnode = Remove(parentnode, targetnode)
         {
            //if only one connection, replace node with it
            //if two, replace node with min from right
            //if none, remove node
+            if (currnode.Data == targetNode)
+            {
+                switch(currnode.Left, currnode.Right)
+                {
+                    case (false, false):
+                        if (targetNode < TouchedNodes.Peek().Data)                                    //connects the new node to it's parent
+                            TouchedNodes.Peek().Left = null;
+                        else
+                            TouchedNodes.Peek().Right = null;
+                        break;
+                    case (true, false):
+                        TouchedNodes.Peek() = currnode.Left;
+                        break;
+                    case (false, true):
+                        TouchedNodes.Peek() = currnode.Right;
+                        break;
+                    case (true, true):
+                        TouchedNodes.Peek() = FindMin(currnode.Right);
+                        break;
+                }
+            }
+            else if (currnode == null)
+            {
+                Console.WriteLine("no node")
+            }
+            TouchedNodes.Push(currnode);
+            if (targetNode < currnode.Data)
+            {
+                RemoveRec(targetNode, currnode.Left)
+            }
+            else if (targetNode > currnode.Right) 
+            { 
+                RemoveRec(targetNode, currnode.Right)
+            }
+            Balance(currnode);
+            return;
         }
 
         public Node? FindMin(Node? p)       //Finds minimum node in tree with p node as root
@@ -181,29 +216,14 @@ namespace Tree_Task
             p.Left = null;
         }
 
-        public Node Balance(Node p)
+        private void Balance(Node p)
         {
-            switch (p.BalanceFactor)
-            {
-                case -2:
-                    if (p.Left.BalanceFactor > 0)
-                    {
-                        p.Left = LeftRotation(p.Left);
-                    }
-                    p = RightRotation(p.Right);
-                    break;
-                case 2:
-                    if (p.Right.BalanceFactor < 0)
-                    {
-                        p.Right = RightRotation(p.Right);
-                    }
-                    p = LeftRotation(p.Left);
-                    break;
-                default:
-                    return p;
-            }
-            Head.FixBalance();
-            return p;
+            Node parentnode = TouchedNodes.Pop();
+            if (p.Data < parentnode.Data)
+                parentnode.Left = parentnode.Left.BalanceNode();
+            else
+                parentnode.Right = parentnode.Right.BalanceNode();
+            return;
         }
 
         public Node RightRotation(Node p)

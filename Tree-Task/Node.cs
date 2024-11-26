@@ -75,6 +75,48 @@ namespace Tree_Task
             }
         }
 
+        private Node RotateRight()
+        {
+            Node q = this.Left;
+            this.Left = q.Right;
+            q.Right = this;
+            this.CheckBalance();
+            q.CheckBalance();
+            return q;
+        }
+
+        private Node RotateLeft()
+        {
+            Node q = this.Right;
+            this.Right = q.Left;
+            q.Left = this;
+            this.CheckBalance();
+            q.CheckBalance();
+            return q;
+        }
+
+        public Node BalanceNode()
+        {
+            this.CheckBalance();
+            if (this.BalanceFactor == 2)
+            {
+                if (this.Right.BalanceFactor < 0)
+                {
+                    this.Right = this.Right.RotateRight();
+                }
+                return this.RotateLeft()
+            }
+            if (this.BalanceFactor == -2)
+            {
+                if (this.Left.BalanceFactor > 0)
+                {
+                    this.Left = this.Left.RotateLeft()
+                }
+                return this.RotateRight()
+            }
+            return this;
+        }
+
         public override string ToString()
         {
             return Convert.ToString(this.Data);
