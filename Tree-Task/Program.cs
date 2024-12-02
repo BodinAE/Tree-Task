@@ -23,14 +23,14 @@
             Console.WriteLine(test.Find(10));
 
 
-            //test.Remove(7);
-            //Tree.Print(test.Head);
+            test.Remove(7);
+            Tree.Print(test.Head);
 
-            //test.Remove(2);
-            //Tree.Print(test.Head);
+            test.Remove(1);
+            Tree.Print(test.Head);
 
-            //test.Remove(13);
-            //Tree.Print(test.Head);
+            test.Remove(10);
+            Tree.Print(test.Head);
             //var n = test.Find(5);
             //n = test.RightRotation(n);
             //Tree.Print(test.Head);

@@ -56,7 +56,6 @@ namespace Tree_Task
             {
                 InsertRec(data, Head);
             }
-            TouchedNodes.Clear();
         }
         private void InsertRec(int data, Node? currnode)                                //
         {
@@ -95,7 +94,6 @@ namespace Tree_Task
             {
                 RemoveRec(target, Head);
             }
-            TouchedNodes.Clear();
         }
         public void RemoveRec(int targetNode, Node? currnode)                 //Removes node in parentnode tree through recursion, should be called parentnode = Remove(parentnode, targetnode)
         {
@@ -132,7 +130,7 @@ namespace Tree_Task
 
                         case (true, true):
                             Node min = FindMin(currnode.Right);
-                            RemoveMin(currnode.Right);
+                            Remove(min.Data);
                             min.Left = currnode.Left;
                             min.Right = currnode.Right;
                             if (targetNode < parentnode.Data)                                    //connects the new node to it's parent
@@ -141,6 +139,8 @@ namespace Tree_Task
                                 parentnode.Right = min;
                             break;
                     }
+                    if (TouchedNodes.Count > 0)
+                        TouchedNodes.Pop();
                 }
                 else
                 {
@@ -157,7 +157,7 @@ namespace Tree_Task
                             break;
                         case (true, true):
                             Node min = FindMin(currnode.Right);
-                            RemoveMin(currnode.Right);
+                            Remove(min.Data);
                             min.Left = currnode.Left;
                             min.Right = currnode.Right;
                             Head = min;
@@ -166,14 +166,14 @@ namespace Tree_Task
                     }
                 }
                 currnode.Left = null;
-                currnode.Right = null;
+                currnode.Right = null;               
                 return;
             }
             else if (currnode == null)
             {
                 Console.WriteLine("no node");
             }
-            TouchedNodes.Push(currnode);
+            else TouchedNodes.Push(currnode);
             if (targetNode < currnode.Data)
             {
                 RemoveRec(targetNode, currnode.Left);
@@ -182,6 +182,7 @@ namespace Tree_Task
             {
                 RemoveRec(targetNode, currnode.Right);
             }
+            //if (currnode != Head) TouchedNodes.Pop();
             Balance(currnode);
             return;
         }
@@ -193,28 +194,6 @@ namespace Tree_Task
                 return FindMin(p.Left);
             }
             return p;
-        }
-
-        private void RemoveMin(Node p)      //used for node removal
-        {
-            //if (p.Left == null) 
-            //{
-            //    p.Left = null;
-            //    return; 
-            //}
-            Stack<Node> RMnodes = new Stack<Node>();
-            while (p.Left.Left != null)
-            {
-                RMnodes.Push(p);
-                p = p.Left;
-            }
-            RMnodes.Push(p);
-            p.Left = null;
-            while (RMnodes.Count > 0)
-            {
-                Node q = RMnodes.Pop();
-                q = q.BalanceNode();
-            }
         }
 
         private void Balance(Node p)
@@ -232,26 +211,6 @@ namespace Tree_Task
                     parentnode.Right = parentnode.Right.BalanceNode();
                 return;
             }
-        }
-
-        public Node RightRotation(Node p)
-        {
-            Node? L = p.Left;
-            p.Left = L.Right;
-            L.Right = p;
-            p.CheckBalance();
-            Balance(p);
-            return p;
-        }
-
-        public Node LeftRotation(Node p)
-        {
-            Node? R = p.Right;
-            p.Right = R.Left;
-            R.Left = p;
-            p.CheckBalance();
-            Balance(p);
-            return p;
         }
 
         public static void Print(Node? p, int depth = 0)

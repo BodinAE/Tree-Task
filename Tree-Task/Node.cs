@@ -14,11 +14,6 @@ namespace Tree_Task
         public int Height { get; set; }
         public int BalanceFactor { get; set; }
 
-        //public Node(int data, int height)
-        //{
-        //    this.Data = data;
-        //    this.Height = height;
-        //}
         public Node(int data)
         {
             this.Data = data;
@@ -54,7 +49,7 @@ namespace Tree_Task
             switch (Left != null, Right != null)
             {
                 case (false, false):
-                    Height = 0;
+                    Height = 1;
                     break;
 
                 case (false, true):
