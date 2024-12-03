@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Tree_Task
 {
@@ -212,7 +214,10 @@ namespace Tree_Task
                 return;
             }
         }
-
+        public static void Print(Tree tree) 
+        {
+            Print(tree.Head);
+        }
         public static void Print(Node? p, int depth = 0)
         {
             //string[] lines = new string[Head.Height];
@@ -228,6 +233,42 @@ namespace Tree_Task
                 Console.Write("Rite");
                 Print(p.Right, depth + 1);
             }
+        }
+    
+        public static Tree operator +(Tree tree, int n)
+        {
+            var otpt = new Tree();
+            otpt.Insert(Sum(tree.Head, n));
+
+            int Sum(Node node, int x)
+            {
+                var sum = node.Data +  x;
+                if (node.Left != null) 
+                    otpt.Insert(Sum(node.Left, x));
+                if (node.Right != null)
+                    otpt.Insert(Sum(node.Right, x));
+                return sum;
+            }
+            
+            return otpt;
+        }
+
+        public static Tree operator +(Tree tree1, Tree tree2)
+        {
+            var otpt = new Tree();
+            Ins(tree1.Head);
+            Ins(tree2.Head);
+            void Ins(Node node)
+            {
+                otpt.Insert(node.Data);
+                if (node.Left != null)
+                    Ins(node.Left);
+                if (node.Right != null)
+                    Ins(node.Right);
+                return;
+            }
+
+            return otpt;
         }
     }
 }

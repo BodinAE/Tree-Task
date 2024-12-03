@@ -31,6 +31,8 @@
 
             test.Remove(10);
             Tree.Print(test.Head);
+            Tree.Print((test + 1) + test);
+            
             //var n = test.Find(5);
             //n = test.RightRotation(n);
             //Tree.Print(test.Head);
