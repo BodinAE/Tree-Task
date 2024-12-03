@@ -47,7 +47,7 @@ namespace Tree_Task
         }
 
 
-        public void Insert (int data)
+        public void Insert (int data)                                                   //Initialises the recursive insert function
         {
             TouchedNodes = new Stack<Node>();
             if (Head == null)
@@ -59,7 +59,7 @@ namespace Tree_Task
                 InsertRec(data, Head);
             }
         }
-        private void InsertRec(int data, Node? currnode)                                //
+        private void InsertRec(int data, Node? currnode)                                //Finds the appropriate place to inser a node, inserts it and balances the nodes affected
         {
             if (currnode == null)                                                       //if node is null, assumes it's the correct placement and creates new node
             {
@@ -85,7 +85,7 @@ namespace Tree_Task
             return;
         }
 
-        public void Remove(int target)
+        public void Remove(int target)                                        //initiates the recursive remove function
         {
             TouchedNodes = new Stack<Node>();
             if (Head == null)
@@ -104,49 +104,49 @@ namespace Tree_Task
            //if none, remove node
             if (currnode.Data == targetNode)
             {
-                if (currnode != Head)
+                if (currnode != Head)                                                            //if the node not head
                 { 
                     Node parentnode = TouchedNodes.Peek();
                     switch (currnode.Left != null, currnode.Right != null)
                     {
-                        case (false, false):
-                            if (targetNode < parentnode.Data)                                    //connects the new node to it's parent
+                        case (false, false):                                                     //if the node has no left nor right nodes
+                            if (targetNode < parentnode.Data)                                    
                                 parentnode.Left = null;
                             else
                                 parentnode.Right = null;
                             break;
 
-                        case (true, false):
-                            if (targetNode < parentnode.Data)                                    //connects the new node to it's parent
+                        case (true, false):                                                      //if the node has no right node
+                            if (targetNode < parentnode.Data)                                    
                                 parentnode.Left = currnode.Left;
                             else
                                 parentnode.Right = currnode.Left; 
                             break;
 
-                        case (false, true):
-                            if (targetNode < parentnode.Data)                                    //connects the new node to it's parent
+                        case (false, true):                                                      //if the node has no left node
+                            if (targetNode < parentnode.Data)                                    
                                 parentnode.Left = currnode.Right;
                             else
                                 parentnode.Right = currnode.Right;
                             break;
 
-                        case (true, true):
+                        case (true, true):                                                       //if the node has both left and right nodes
                             Node min = FindMin(currnode.Right);
-                            Remove(min.Data);
-                            min.Left = currnode.Left;
+                            Remove(min.Data);                                                    //Find and remove the minimum right node of the one being removed
+                            min.Left = currnode.Left;                                            //replace the removed node with minimum right
                             min.Right = currnode.Right;
-                            if (targetNode < parentnode.Data)                                    //connects the new node to it's parent
+                            if (targetNode < parentnode.Data)                                    
                                 parentnode.Left = min;
                             else
                                 parentnode.Right = min;
                             break;
                     }
-                    if (TouchedNodes.Count > 0)
+                    if (TouchedNodes.Count > 0)                                                  //failsafe to avoid issues with balancing
                         TouchedNodes.Pop();
                 }
                 else
                 {
-                    switch (currnode.Left != null, currnode.Right != null)
+                    switch (currnode.Left != null, currnode.Right != null)                       
                     {
                         case (false, false):
                             Head = null;
@@ -167,16 +167,16 @@ namespace Tree_Task
                             break;
                     }
                 }
-                currnode.Left = null;
+                currnode.Left = null;                                                            //null removed node's children so it can be deleted by the garbage collector
                 currnode.Right = null;               
                 return;
             }
-            else if (currnode == null)
+            else if (currnode == null)                                                           //if the whole tree traversed and target node not found
             {
                 Console.WriteLine("no node");
             }
-            else TouchedNodes.Push(currnode);
-            if (targetNode < currnode.Data)
+            else TouchedNodes.Push(currnode);                                                    //add the current node to the stack, so it can get balanced later
+            if (targetNode < currnode.Data)                                                      //go further down the tree
             {
                 RemoveRec(targetNode, currnode.Left);
             }
@@ -184,7 +184,6 @@ namespace Tree_Task
             {
                 RemoveRec(targetNode, currnode.Right);
             }
-            //if (currnode != Head) TouchedNodes.Pop();
             Balance(currnode);
             return;
         }
@@ -198,15 +197,15 @@ namespace Tree_Task
             return p;
         }
 
-        private void Balance(Node p)
+        private void Balance(Node p)                                                //Calls the balance function on the node p
         {
             if (p == Head)
             {
                 Head = Head.BalanceNode();
             }
             else
-            {
-                Node parentnode = TouchedNodes.Pop();
+            {   
+                Node parentnode = TouchedNodes.Pop();                               //Retrieves p's parent from the node stack
                 if ((p.Data < parentnode.Data) && (parentnode.Left != null))
                     parentnode.Left = parentnode.Left.BalanceNode();
                 else if (parentnode.Right != null)
@@ -220,7 +219,7 @@ namespace Tree_Task
         }
         public static void Print(Node? p, int depth = 0)
         {
-            //string[] lines = new string[Head.Height];
+
             if (p == null) return;
             Console.WriteLine($"{new String('.', depth)} {p.Data}");
             if (p.Left != null)
@@ -235,19 +234,23 @@ namespace Tree_Task
             }
         }
     
+
+        //3
         public static Tree operator +(Tree tree, int n)
         {
             var otpt = new Tree();
-            otpt.Insert(Sum(tree.Head, n));
+            Sum(tree.Head, n);
 
-            int Sum(Node node, int x)
+            void Sum(Node node, int x)
             {
+                if (node == null)
+                    return;
+
                 var sum = node.Data +  x;
-                if (node.Left != null) 
-                    otpt.Insert(Sum(node.Left, x));
-                if (node.Right != null)
-                    otpt.Insert(Sum(node.Right, x));
-                return sum;
+                otpt.Insert(sum);
+                Sum(node.Left, x);
+                Sum(node.Right, x);
+                return;
             }
             
             return otpt;
@@ -255,6 +258,9 @@ namespace Tree_Task
 
         public static Tree operator +(Tree tree1, Tree tree2)
         {
+            //!!!
+            //DO SAME AS TREE + N!!!
+            //!!!
             var otpt = new Tree();
             Ins(tree1.Head);
             Ins(tree2.Head);
